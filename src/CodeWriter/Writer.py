@@ -46,7 +46,8 @@ class Writer:
         indents the first argument of args and the file parameter is given by the object itself as specified in
         `__init__`.
         :param args:
-            arguments which should be printed.
+            arguments which should be printed. Note: the newline character '\n' gets extended with the current
+            indentation.
         :param sep: str, optional
             The printed separator between arguments. Note: the newline character '\n' gets extended with the
             current indentation.
@@ -56,6 +57,7 @@ class Writer:
         :param flush: bool, optional
             See: https://docs.python.org/3/library/functions.html#print
         """
+        args = [str(arg).replace('\n', f'\n{self.__get_indentation()}') for arg in args]
         # check for linebreaks in the separator
         if '\n' in sep:
             # extend linebreak with current indentation to guarantee correct indentation and warn user
@@ -103,8 +105,7 @@ class Writer:
         :return: Block
             Returns the block for us in `with` statement.
         """
-        block = Listing(entry_line, exit_line, self, item)
-        return self.block(block)
+        return self.block(Listing(entry_line, exit_line, self, item))
 
     def item(self, line: str = ''):
         """
