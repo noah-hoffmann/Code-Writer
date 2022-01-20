@@ -40,6 +40,9 @@ class Writer:
         """
         return self.indentation * self.indentation_level
 
+    def extend_newline(self, s: str) -> str:
+        return s.replace('\n', f'\n{self.__get_indentation()}')
+
     def print(self, *args, sep=' ', end='\n', flush=False):
         """
         Works like the normal `print` function (see: https://docs.python.org/3/library/functions.html#print), except it
@@ -57,12 +60,11 @@ class Writer:
         :param flush: bool, optional
             See: https://docs.python.org/3/library/functions.html#print
         """
-        args = [str(arg).replace('\n', f'\n{self.__get_indentation()}') for arg in args]
+        # check for linebreaks in the arguments
+        args = [self.extend_newline(str(arg)) for arg in args]
         # check for linebreaks in the separator
-        if '\n' in sep:
-            # extend linebreak with current indentation to guarantee correct indentation and warn user
-            sep = sep.replace('\n', f'\n{self.__get_indentation()}')
-            warnings.warn("Found linebreak in 'sep', linebreak gets extended with current indentation!", UserWarning)
+        # extend linebreak with current indentation to guarantee correct indentation and warn user
+        sep = self.extend_newline(sep)
         # if the last character of 'end' is not a newline character warn the user
         if '\n' != end[-1]:
             warnings.warn("There is no linebreak in 'end' or it is not at the end of 'end'."
@@ -155,16 +157,17 @@ class Block:
         self.writer = writer
 
     def __enter__(self):
-        # upon entering a block print the entry line
-        self.writer.print(self.entry_line)
+        # upon entering a block print the entry line and extend possible newline characters
+        self.writer.print(self.writer.extend_newline(self.entry_line))
         # increase indentation level
         self.writer.indentation_level += 1
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         # upon exiting a block decrease indentation level
         self.writer.indentation_level -= 1
-        # print the exit line
-        self.writer.print(self.exit_line)
+        # print the exit line and extend possible newline characters
+        if self.exit_line:
+            self.writer.print(self.writer.extend_newline(self.exit_line))
         # remove this `Block` from the block list of the writer
         self.writer.blocks.pop()
 
