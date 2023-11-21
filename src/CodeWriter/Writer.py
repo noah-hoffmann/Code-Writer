@@ -82,7 +82,7 @@ class Writer:
         :param exit_line: str, optional
             String, which gets printed upon exiting the block.
         :return: Block
-            Returns the block for us in `with` statement.
+            Returns the block for use in `with` statement.
         """
         # Check if a new block has to be created or not.
         if isinstance(entry_line, str):
