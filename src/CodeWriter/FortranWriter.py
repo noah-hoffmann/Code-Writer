@@ -1,4 +1,4 @@
-from . import Writer, Block
+from . import Writer, Block, Listing
 import textwrap
 
 
@@ -38,6 +38,20 @@ class Module(Block):
                          f"end module {name}",
                          writer)
 
+class Select(Listing):
+    def __init__(self, writer: Writer, value: str):
+        super().__init__(f"select case ({value})",
+                         "end select",
+                         writer,
+                         "case")
+
+class If(Listing):
+    def __init__(self, writer: Writer, condition: str):
+        super().__init__(f"if ({condition}) then",
+                         "end if",
+                         writer,
+                         "else")
+
 
 class FortranWriter(Writer):
     def function(self, name: str, *args: str, result: str = None, elemental=False, pure=False,
@@ -73,3 +87,12 @@ class FortranWriter(Writer):
         self.indentation_level -= 1
         self.print("contains", flush=flush)
         self.indentation_level += 1
+
+    def case(self, line: str = ''):
+        super().item(f"({line})")
+
+    def select(self, value: str):
+        return super().block(Select(self, value))
+
+    def if_then(self, condition: str):
+        return super().block(If(self, condition))
