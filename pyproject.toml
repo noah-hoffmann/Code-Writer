@@ -1,3 +1,15 @@
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "CodeWriter"
+version = "1.0.0"
+authors = [
+    { name = "Noah Hoffmann", email = "noahhoffmann1202@gmail.com" }
+]
+description = "Package for generating correctly indented code"
+requires-python = ">=3.10"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/CodeWriter"]

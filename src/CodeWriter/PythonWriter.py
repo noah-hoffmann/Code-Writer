@@ -10,7 +10,7 @@ class Function(Block):
 
 class Class(Block):
     def __init__(self, writer: Writer, name: str, *args: str):
-        arguments = ', '.join(args)
+        arguments = ", ".join(args)
         if arguments:
             arguments = f"({arguments})"
         super().__init__(f"class {name}{arguments}:", " ", writer)
@@ -22,7 +22,9 @@ class ForLoop(Block):
 
 
 class RangeLoop(ForLoop):
-    def __init__(self, writer: Writer, variable: str, start: int, stop: str = "", step: str = ""):
+    def __init__(
+        self, writer: Writer, variable: str, start: str, stop: str = "", step: str = ""
+    ):
         arguments = ", ".join((s for s in (start, stop, step) if s))
         super().__init__(writer, variable, f"range({arguments})")
 
@@ -61,7 +63,9 @@ class PythonWriter(Writer):
             block = self.blocks[-1]
             assert isinstance(block, IfStatement)
         except AssertionError:
-            raise RuntimeError(f"You are currently in a '{type(block)}' not in a 'IfStatement'!")
+            raise RuntimeError(
+                f"You are currently in a '{type(block)}' not in a 'IfStatement'!"
+            )
         except IndexError:
             raise RuntimeError("There are currently no Listings!")
         self.indentation_level -= 1
@@ -73,7 +77,9 @@ class PythonWriter(Writer):
             block = self.blocks[-1]
             assert isinstance(block, IfStatement)
         except AssertionError:
-            raise RuntimeError(f"You are currently in a '{type(block)}' not in a 'IfStatement'!")
+            raise RuntimeError(
+                f"You are currently in a '{type(block)}' not in a 'IfStatement'!"
+            )
         except IndexError:
             raise RuntimeError("There are currently no Listings!")
         self.indentation_level -= 1

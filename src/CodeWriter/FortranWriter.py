@@ -3,8 +3,16 @@ import textwrap
 
 
 class Function(Block):
-    def __init__(self, writer: Writer, name: str, *args: str, result: str = None,
-                 elemental=False, pure=False, trailing=True):
+    def __init__(
+        self,
+        writer: Writer,
+        name: str,
+        *args: str,
+        result: str | None = None,
+        elemental=False,
+        pure=False,
+        trailing=True,
+    ):
         if result is not None:
             result = f" result({result})"
         else:
@@ -18,8 +26,8 @@ class Function(Block):
             method = "function"
         super().__init__(
             f"{method} {name}({', '.join(args)}){result}",
-            f"end function {name}" + ('\n' if trailing else ''),
-            writer
+            f"end function {name}" + ("\n" if trailing else ""),
+            writer,
         )
 
 
@@ -27,37 +35,47 @@ class Subroutine(Block):
     def __init__(self, writer: Writer, name: str, *args: str, trailing=True):
         super().__init__(
             f"subroutine {name}({', '.join(args)})",
-            f"end subroutine {name}" + ('\n' if trailing else ''),
-            writer
+            f"end subroutine {name}" + ("\n" if trailing else ""),
+            writer,
         )
 
 
 class Module(Block):
     def __init__(self, writer: Writer, name: str):
-        super().__init__(f"module {name}",
-                         f"end module {name}",
-                         writer)
+        super().__init__(f"module {name}", f"end module {name}", writer)
+
 
 class Select(Listing):
     def __init__(self, writer: Writer, value: str):
-        super().__init__(f"select case ({value})",
-                         "end select",
-                         writer,
-                         "case")
+        super().__init__(f"select case ({value})", "end select", writer, "case")
+
 
 class If(Listing):
     def __init__(self, writer: Writer, condition: str):
-        super().__init__(f"if ({condition}) then",
-                         "end if",
-                         writer,
-                         "else")
+        super().__init__(f"if ({condition}) then", "end if", writer, "else")
 
 
 class FortranWriter(Writer):
-    def function(self, name: str, *args: str, result: str = None, elemental=False, pure=False,
-                 trailing=True):
-        return super().block(Function(self, name, *args, result=result, elemental=elemental, pure=pure,
-                                      trailing=trailing))
+    def function(
+        self,
+        name: str,
+        *args: str,
+        result: str | None = None,
+        elemental=False,
+        pure=False,
+        trailing=True,
+    ):
+        return super().block(
+            Function(
+                self,
+                name,
+                *args,
+                result=result,
+                elemental=elemental,
+                pure=pure,
+                trailing=trailing,
+            )
+        )
 
     def subroutine(self, name: str, *args: str, trailing=True):
         return super().block(Subroutine(self, name, *args, trailing=trailing))
@@ -69,13 +87,15 @@ class FortranWriter(Writer):
         if dedent:
             comment = textwrap.dedent(comment)
         comment = f"! {comment}"
-        comment = comment.replace('\n', "\n! ")
+        comment = comment.replace("\n", "\n! ")
         self.print(comment, flush=flush)
 
     def use(self, module: str, flush=False):
         self.print(f"use {module}", flush=flush)
 
-    def declare(self, type: str, *variables: str, allocatable=False, intent=None, flush=False):
+    def declare(
+        self, type: str, *variables: str, allocatable=False, intent=None, flush=False
+    ):
         declaration = type
         if allocatable:
             declaration = f"{declaration}, allocatable"
@@ -88,7 +108,7 @@ class FortranWriter(Writer):
         self.print("contains", flush=flush)
         self.indentation_level += 1
 
-    def case(self, line: str = ''):
+    def case(self, line: str = ""):
         super().item(f"({line})")
 
     def select(self, value: str):

@@ -15,7 +15,9 @@ class Writer:
 
     """
 
-    def __init__(self, indentation: str = ' ' * 4, indentation_level: int = 0, file=sys.stdout):
+    def __init__(
+        self, indentation: str = " " * 4, indentation_level: int = 0, file=sys.stdout
+    ):
         """
         Creates a new Writer object.
         :param indentation: str, optional
@@ -41,9 +43,9 @@ class Writer:
         return self.indentation * self.indentation_level
 
     def extend_newline(self, s: str) -> str:
-        return s.replace('\n', f'\n{self.__get_indentation()}')
+        return s.replace("\n", f"\n{self.__get_indentation()}")
 
-    def print(self, *args, sep=' ', end='\n', flush=False):
+    def print(self, *args, sep=" ", end="\n", flush=False):
         """
         Works like the normal `print` function (see: https://docs.python.org/3/library/functions.html#print), except it
         indents the first argument of args and the file parameter is given by the object itself as specified in
@@ -66,15 +68,18 @@ class Writer:
         # extend linebreak with current indentation to guarantee correct indentation and warn user
         sep = self.extend_newline(sep)
         # if the last character of 'end' is not a newline character warn the user
-        if '\n' != end[-1]:
-            warnings.warn("There is no linebreak in 'end' or it is not at the end of 'end'."
-                          "Correct indentation can not be guaranteed!", UserWarning)
+        if "\n" != end[-1]:
+            warnings.warn(
+                "There is no linebreak in 'end' or it is not at the end of 'end'."
+                "Correct indentation can not be guaranteed!",
+                UserWarning,
+            )
         # Start by indenting
-        print(self.__get_indentation(), end='', file=self.file)
+        print(self.__get_indentation(), end="", file=self.file)
         # print arguments
         print(*args, sep=sep, end=end, flush=flush, file=self.file)
 
-    def block(self, entry_line: Union[str, Block], exit_line: str = '') -> Block:
+    def block(self, entry_line: Union[str, Block], exit_line: str = "") -> Block:
         """
         Creates a new indentation block.
         :param entry_line: str or Block
@@ -90,12 +95,14 @@ class Writer:
         elif isinstance(entry_line, Block):
             block = entry_line
         else:
-            raise TypeError("The argument 'entry_line' has to be either an instance of a 'str' or of a 'Block'.")
+            raise TypeError(
+                "The argument 'entry_line' has to be either an instance of a 'str' or of a 'Block'."
+            )
         # Append block to block list
         self.blocks.append(block)
         return block
 
-    def listing(self, entry_line: str, item: str, exit_line: str = '') -> Block:
+    def listing(self, entry_line: str, item: str, exit_line: str = "") -> Block:
         """
         Creates a new indented listing.
         :param entry_line: str
@@ -109,7 +116,7 @@ class Writer:
         """
         return self.block(Listing(entry_line, exit_line, self, item))
 
-    def item(self, line: str = ''):
+    def item(self, line: str = ""):
         """
         Function for printing a new item in a listing.
         :param line: str, optional
@@ -120,7 +127,9 @@ class Writer:
             block = self.blocks[-1]
             assert isinstance(block, Listing)
         except AssertionError:
-            raise RuntimeError(f"You are currently in a '{type(block)}' not in a 'Listing'!")
+            raise RuntimeError(
+                f"You are currently in a '{type(block)}' not in a 'Listing'!"
+            )
         except IndexError:
             raise RuntimeError("There are currently no Listings!")
         # If there was already an item before, decrease the indentation_level
@@ -176,6 +185,7 @@ class Listing(Block):
     """
     Subclass of `Block` for creating itemized listings.
     """
+
     def __init__(self, entry_line: str, exit_line: str, writer: Writer, item: str):
         """
         Create a new `Listing` object.

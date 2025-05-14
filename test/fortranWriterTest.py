@@ -7,7 +7,8 @@ def main():
         """\
         This module was generate automatically.
         Do not change it!\
-        """)
+        """
+    )
     with writer.module("nonlocal_x"):
         writer.use("precision, only: dp")
         writer.use("constants, only: pi")
@@ -25,5 +26,5 @@ def main():
             writer.print()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
