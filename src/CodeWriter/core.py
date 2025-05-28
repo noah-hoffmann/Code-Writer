@@ -1,7 +1,7 @@
 from __future__ import annotations
 import sys
 import warnings
-from typing import Union
+from typing import Union, TextIO
 
 
 class Writer:
@@ -16,7 +16,10 @@ class Writer:
     """
 
     def __init__(
-        self, indentation: str = " " * 4, indentation_level: int = 0, file=sys.stdout
+        self,
+        indentation: str = " " * 4,
+        indentation_level: int = 0,
+        file: TextIO = sys.stdout,
     ):
         """
         Creates a new Writer object.
